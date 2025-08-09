@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+
+    <main class="flex-1 p-[5%] pt-10 space-y-6">
+        <div>
+            <h1 class="text-3xl font-bold text-[#1e2a44] mb-0 pb-0">{{ case.plaintiff}} v. {{ case.defendant}}</h1>
+            <p class="text-m font-bold text-[#1e2a44] mb-4 pt-0 mt-0">
+                Status - {{ case.stage|title}} 
+                &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;  
+                Last Updated - {{ case.last_worked_on}}
+                &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;  
+                Hired By - {{ case.hired_by|title}}
+            </p>
+        </div>
+      <div class="grid lg:grid-cols-2 gap-6">
+        <!-- Left Column -->
+        <div class="space-y-6">
+          <section class="bg-gray-200 shadow rounded p-4">
+            <h2 class="text-lg font-bold">{{ case.short_name }} </h2>
+            <p>Case No. - <span class="float-right">{{ case.case_number }}</span></p>
+            <p>Type - <span class="float-right">{{ case.case_type }}</span></p>
+            <p>Plaintiff - <span class="float-right">{{ case.plaintiff}}</span></p>
+            <p>Plaintiff Lawyer -<span class="float-right">{{ case.plaintiff_lawyer}}</span></p>
+            <p>Defendant - <span class="float-right">{{ case.defendant}}</span></p>
+            <p>Defendant Lawyer -<span class="float-right">{{ case.defendant_lawyer|default:"N/A" }}</span></p>
+            <p class="mt-2 font-semibold">Summary</p>
+            <p>{{ case.summary}}</p>
+          </section>
+
+          <section class="bg-gray-200 shadow rounded p-4">
+            <p class="font-bold">Next Due Date - <span class="font-normal">{Date} Report Due</span></p>
+            <p class="underline">Next Date - {Date} Report Due</p>
+          </section>
+
+        <!-- Task Toggle Buttons -->
+        <!-- Task Toggle + List -->
+        <section class="bg-gray-200 shadow rounded p-4 max-h-60 overflow-y-scroll">
+        <div class="flex justify-between items-center mb-2">
+            <h2 class="font-bold underline">Tasks</h2>
+
+            <button
+            class="text-sm text-blue-600 hover:underline"
+            hx-get="{% url 'task_modal_create' case.id %}?view={{ task_filter }}"
+            hx-target="#modal-root"
+            hx-swap="innerHTML">
+            + Create New Task
+            </button>
+
+            <div class="space-x-2 text-sm">
+            <a href="?task_filter=todo"
+                class="px-2 py-1 rounded {% if task_filter != 'complete' %}bg-blue-600 text-white{% else %}bg-gray-300 text-black{% endif %}">
+                To Do
+            </a>
+            <a href="?task_filter=complete"
+                class="px-2 py-1 rounded {% if task_filter == 'complete' %}bg-blue-600 text-white{% else %}bg-gray-300 text-black{% endif %}">
+                Complete
+            </a>
+            </div>
+        </div>
+
+        <!-- The list we replace after saving (MUST match hx-target in modal) -->
+        <div id="tasks-list">
+            {% if tasks %}
+            <ul class="space-y-2">
+                {% for task in tasks %}
+                <li class="p-2 bg-white rounded shadow">
+                    <div class="font-semibold">{{ task.task_type }}</div>
+                    <div class="text-xs text-gray-700">
+                    {{ task.status|title }} | Due: {{ task.end_time|date:"M d, Y" }}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-gray-700 italic">No tasks to display.</p>
+            {% endif %}
+        </div>
+        </section>
+
+        <!-- Modal mount point (HTMX injects modal here) -->
+        <div id="modal-root"></div>
+        </div>
+
+
+        <!-- Right Column - Notes-->
+        <section class="bg-gray-200 shadow rounded p-4">
+        <h2 class="font-bold underline mb-2">Make a Note</h2>
+
+        <!-- Keep the form outside of the target -->
+        <form 
+            method="POST"   
+            hx-post="{% url 'case_note_create' case.id %}" 
+            hx-target="#note-list" 
+            hx-swap="beforeend"
+            hx-on="htmx:afterSwap: this.reset()"
+        >
+            {% csrf_token %}
+            
+            <textarea 
+            name="note_text" 
+            class="w-full h-24 p-2 rounded bg-gray-100" 
+            placeholder="Type your note here..."
+            ></textarea>
+
+            <div class="flex justify-between mt-2 text-sm text-blue-900 font-bold">
+            <button type="submit" class="hover:underline">Publish Note</button>
+            <a href="#" class="hover:underline">See All Notes</a>
+            </div>
+        </form>
+
+        <!-- Notes List (update target) -->
+        <div id="note-list" class="mt-4">
+            {% include 'partials/task_list.html' with tasks=incomplete_tasks %}
+        </div>
+        </section>
+
+
+
+        </div>
+      </div>
+    </main>
+{% endblock %}

@@ -1,0 +1,10 @@
+<form 
+  method="POST"
+  hx-post="{{ request.path }}" 
+  hx-target="#task-form-target"
+  hx-swap="outerHTML"
+>
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded">Save Task</button>
+</form>

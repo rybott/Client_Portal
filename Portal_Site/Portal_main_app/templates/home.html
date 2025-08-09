@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <main class="flex-1 p-[5%] pt-10 space-y-6">
+      <h1 class="text-3xl font-bold text-[#1e2a44] mb-4">Client Dashboard</h1>
+
+      <div class="grid lg:grid-cols-2 gap-6">
+        <!-- Left Column -->
+        <div class="space-y-6">
+          <section class="bg-gray-200 shadow rounded p-4">
+            <h2 class="text-lg font-bold">Short Name</h2>
+            <p>Case No. - <span class="float-right">Casnhsdfgldfkjg;</span></p>
+            <p>Type - <span class="float-right">Casnhsdfgldfkjg;</span></p>
+            <p>Plaintiff - <span class="float-right">Casnhsdfgldfkjg;</span></p>
+            <p>Defendant - <span class="float-right">Casnhsdfgldfkjg;</span></p>
+            <p class="mt-2 font-semibold">Summary</p>
+            <p>Brief Summary of the Case</p>
+          </section>
+
+          <section class="bg-gray-200 shadow rounded p-4">
+            <h2 class="font-bold">Lawyers</h2>
+            <p>Main Contact - Lawyer</p>
+            <p>Email - Email</p>
+            <p>Phone - Phone Number</p>
+            <p class="mt-2 font-semibold underline">Other Lawyers</p>
+            <p>List of Other Lawyers</p>
+          </section>
+
+          <section class="bg-gray-200 shadow rounded p-4">
+            <h2 class="font-bold underline mb-2">Make a Note</h2>
+            <textarea class="w-full h-24 p-2 rounded bg-gray-100"></textarea>
+            <div class="flex justify-between mt-2 text-sm text-blue-900 font-bold">
+              <a href="#">Publish Note</a>
+              <a href="#">See All Notes</a>
+            </div>
+          </section>
+        </div>
+
+
+        <!-- Right Column -->
+        <div class="space-y-6">
+          <section class="bg-gray-200 shadow rounded p-4">
+            <p class="font-bold">Next Due Date - <span class="font-normal">{Date} Report Due</span></p>
+            <p class="underline">Next Date - {Date} Report Due</p>
+          </section>
+
+          <section class="bg-white shadow rounded p-4 h-40">
+            <h2 class="font-bold underline">Things To Do</h2>
+          </section>
+
+          <section class="bg-white shadow rounded p-4 h-40">
+            <h2 class="font-bold underline">Completed Tasks</h2>
+          </section>
+        </div>
+      </div>
+    </main>
+{% endblock %}

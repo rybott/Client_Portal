@@ -1,0 +1,57 @@
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Client Dashboard{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+
+<body class="bg-gray-100 font-serif">
+  <div class="min-h-screen flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#1e2a44] text-[#f5ecd2] p-8 flex-shrink-0">
+      <div class="text-4xl font-bold mb-8">𝒩</div>
+      <div class="mb-6">
+        <select class="w-full p-1 text-black rounded">
+          <option>Value</option>
+        </select>
+      </div>
+      <nav class="space-y-3">
+        <a href="#" class="block">Home</a>
+        <a href="#" class="block">Calendar</a>
+        <a href="#" class="block">Tasks</a>
+        <a href="#" class="block">Cases</a>
+        <a href="#" class="block">Notes</a>
+      </nav>
+      <div class="mt-8">
+        <h2 class="font-bold border-b border-[#f5ecd2] pb-1 mb-2">Current Cases</h2>
+        <ul>
+          {% for case in open_cases %}
+            <li>
+              <a href="{% url 'case_detail' pk=case.id %}" class="block text-inherit no-underline">
+                {{ case.short_name }}
+              </a>
+            </li>
+          {% empty %}
+            <li>No active cases</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    
+       {% block content %}
+
+      {% endblock %}   
+
+
+  </div>
+</body>
+
+</html>

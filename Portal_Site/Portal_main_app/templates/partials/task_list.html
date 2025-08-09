@@ -1,0 +1,12 @@
+{% if tasks %}
+  <ul class="space-y-1 text-sm">
+    {% for task in tasks %}
+      <li class="flex justify-between {% if task.completed %}text-gray-500 line-through{% endif %}">
+        <span>{{ task.title }}</span>
+        <span class="text-gray-600">{{ task.due_date }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-sm italic text-gray-600">No tasks found.</p>
+{% endif %}

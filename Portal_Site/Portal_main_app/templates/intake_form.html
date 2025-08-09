@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+{% load widget_tweaks %}
+
+{% block title %}Case Intake 2{% endblock %}
+
+{% block content %}
+
+<style>
+  .form-group {
+    margin-bottom: 0.75rem; /* same as Tailwind's mb-3 */
+  }
+
+  .form-label {
+    display: block;
+    color: rgb(55 65 81); /* Tailwind's gray-700 */
+    font-size: 1.175rem; /* Tailwind's text-sm */
+    font-weight: 700; /* Tailwind's font-bold */
+    margin-bottom: 0.5rem; /* Tailwind's mb-2 */
+  }
+
+  .form-input {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 1rem; /* py-2 px-4 */
+    line-height: 1.5; /* leading-normal */
+    border: 1px solid rgb(209 213 219); /* border-gray-300 */
+    border-radius: 0.5rem; /* rounded-lg */
+    background-color: white;
+    color: rgb(55 65 81); /* text-gray-700 */
+    appearance: none;
+    outline: none;
+    font-size: 1rem;
+  }
+
+  .form-input:focus {
+    border-color: rgb(59 130 246); /* focus:border-blue-500 */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* mimic focus:ring */
+  }
+
+  .form-error {
+    color: rgb(239 68 68); /* Tailwind's text-red-500 */
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+</style>
+
+
+
+<div class="m-auto mt-10 mb-0 block w-[60%]">
+    <h1 class="text-4xl font-bold mb-1">New Case Intake</h1>
+
+<form method="post" class="bg-white p-6 rounded-lg shadow-md max-w">
+  {% csrf_token %}
+  <div class="grid grid-cols-1 gap-6">
+
+    <!-- Short Name -->
+    <div class="form-group">
+      <label for="{{ form.short_name.id_for_label }}" class="form-label">
+        {{ form.short_name.label }}{% if form.short_name.field.required %}<span class="text-red-500">*</span>{% endif %}
+      </label>
+      {{ form.short_name|add_class:"form-input" }}
+      {% for error in form.short_name.errors %}
+        <div class="form-error">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Case Number -->
+    <div class="form-group">
+      <label for="{{ form.case_number.id_for_label }}" class="form-label">
+        {{ form.case_number.label }}{% if form.case_number.field.required %}<span class="text-red-500">*</span>{% endif %}
+      </label>
+      {{ form.case_number|add_class:"form-input" }}
+      {% for error in form.case_number.errors %}
+        <div class="form-error">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Case Type -->
+    <div class="form-group">
+      <label for="{{ form.case_type.id_for_label }}" class="form-label">
+        {{ form.case_type.label }}{% if form.case_type.field.required %}<span class="text-red-500">*</span>{% endif %}
+      </label>
+      {{ form.case_type|add_class:"form-input" }}
+      {% for error in form.case_type.errors %}
+        <div class="form-error">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Date of Case -->
+    <div class="form-group">
+      <label for="{{ form.date_of_case.id_for_label }}" class="form-label">
+        {{ form.date_of_case.label }}{% if form.date_of_case.field.required %}<span class="text-red-500">*</span>{% endif %}
+      </label>
+      {{ form.date_of_case|add_class:"form-input" }}
+      {% for error in form.date_of_case.errors %}
+        <div class="form-error">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Plaintiff -->
+    <div class="form-group">
+      <label for="{{ form.plaintiff.id_for_label }}" class="form-label">
+        {{ form.plaintiff.label }}{% if form.plaintiff.field.required %}<span class="text-red-500">*</span>{% endif %}
+      </label>
+      {{ form.plaintiff|add_class:"form-input" }}
+      {% for error in form.plaintiff.errors %}
+        <div class="form-error">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Defendant -->
+    <div class="form-group">
+      <label for="{{ form.defendant.id_for_label }}" class="form-label">
+        {{ form.defendant.label }}{% if form.defendant.field.required %}<span class="text-red-500">*</span>{% endif %}
+      </label>
+      {{ form.defendant|add_class:"form-input" }}
+      {% for error in form.defendant.errors %}
+        <div class="form-error">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Plaintiff Lawyer Smart Lookup + Subform -->
+    <div class="form-group">
+    <label for="plaintiff-lawyer-search" class="form-label">
+        Plaintiff Lawyer<span class="text-red-500">*</span>
+    </label>
+
+    <!-- Search box -->
+    <input type="text"
+            id="plaintiff-lawyer-search"
+            name="plaintiff_lawyer_search"
+            class="form-input"
+            hx-get="{% url 'lawyer_autocomplete' %}"
+            hx-trigger="keyup changed delay:250ms"
+            hx-target="#plaintiff-lawyer-results"
+            hx-params="*"
+            autocomplete="off"
+    >
+
+    <!-- Autocomplete results -->
+    <div id="plaintiff-lawyer-results" class="border rounded bg-white shadow mt-1"></div>
+
+    <!-- Hidden input to store actual lawyer ID -->
+    <input type="hidden" name="plaintiff_lawyer" id="plaintiff-lawyer-id">
+
+    <!-- HTMX subform target -->
+    <div id="plaintiff-lawyer-form-target" class="mt-2"></div>
+
+    <!-- + Add New Lawyer link -->
+    <a href="#"
+        hx-get="{% url 'lawyer_create_form' %}?side=plaintiff"
+        hx-target="#plaintiff-lawyer-form-target"
+        hx-swap="innerHTML"
+        class="text-blue-500 underline text-sm mt-2 inline-block">
+        + Add new lawyer
+    </a>
+    </div>
+
+    <!-- Defense Lawyer Smart Lookup + Subform -->
+    <div class="form-group">
+    <label for="defense-lawyer-search" class="form-label">
+        Defense Lawyer<span class="text-red-500">*</span>
+    </label>
+
+    <!-- Search input -->
+    <input type="text"
+            id="defense-lawyer-search"
+            name="defense_lawyer_search"
+            class="form-input"
+            hx-get="{% url 'lawyer_autocomplete' %}"
+            hx-trigger="keyup changed delay:250ms"
+            hx-target="#defense-lawyer-results"
+            hx-params="*"
+            autocomplete="off"
+    >
+
+    <!-- Autocomplete results -->
+    <div id="defense-lawyer-results" class="border rounded bg-white shadow mt-1"></div>
+
+    <!-- Hidden input to store the selected Lawyer ID -->
+    <input type="hidden" name="defense_lawyer" id="defense-lawyer-id">
+
+    <!-- HTMX subform target -->
+    <div id="defense-lawyer-form-target" class="mt-2"></div>
+
+    <!-- + Add New Lawyer link -->
+    <a href="#"
+        hx-get="{% url 'lawyer_create_form' %}?side=defense"
+        hx-target="#defense-lawyer-form-target"
+        hx-swap="innerHTML"
+        class="text-blue-500 underline text-sm mt-2 inline-block">
+        + Add new lawyer
+    </a>
+    </div>
+
+    <!-- Hired_By -->
+    <div class="form-group">
+      <label for="{{ form.hired_by.id_for_label }}" class="form-label">
+        {{ form.hired_by.label }}{% if form.hired_by.field.required %}<span class="text-red-500">*</span>{% endif %}
+      </label>
+      {{ form.hired_by|add_class:"form-input" }}
+      {% for error in form.hired_by.errors %}
+        <div class="form-error">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+
+    <!-- Stage -->
+    <div class="form-group">
+      <label for="{{ form.stage.id_for_label }}" class="form-label">
+        {{ form.stage.label }}{% if form.stage.field.required %}<span class="text-red-500">*</span>{% endif %}
+      </label>
+      {{ form.stage|add_class:"form-input" }}
+      {% for error in form.stage.errors %}
+        <div class="form-error">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Submit -->
+    <div>
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+        Submit Case
+      </button>
+    </div>
+
+  </div>
+</form>
+
+</div>
+{% endblock %}

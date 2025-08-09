@@ -1,0 +1,58 @@
+<!-- Overlay -->
+<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" id="task-modal">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6 relative">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-semibold">
+        {% if mode == "edit" %}Edit Task{% else %}Create Task{% endif %}
+      </h3>
+      <button type="button" class="text-gray-500 hover:text-gray-700"
+              onclick="document.getElementById('task-modal').remove()">✕</button>
+    </div>
+
+    <form
+      method="POST"
+      hx-post="{% url 'task_modal_create' case.id %}?view={{ view_mode }}"
+      hx-target="#tasks-list"
+      hx-swap="innerHTML"
+      hx-on="htmx:afterSwap: document.getElementById('task-modal').remove()"
+    >
+      {% csrf_token %}
+
+      <div class="grid gap-3">
+        <div>
+          <label class="block text-sm font-medium mb-1">Task Type</label>
+          {{ form.task_type }}
+        </div>
+
+        {% if form.summary %}
+        <div>
+          <label class="block text-sm font-medium mb-1">Summary</label>
+          {{ form.summary }}
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium mb-1">Start</label>
+            {{ form.start_time }}
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">End (Due)</label>
+            {{ form.end_time }}
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Status</label>
+          {{ form.status }}
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-3">
+        <button type="button" class="px-4 py-2 rounded border"
+                onclick="document.getElementById('task-modal').remove()">Cancel</button>
+        <button type="submit" class="px-4 py-2 rounded bg-[#1e2a44] text-white">Save Task</button>
+      </div>
+    </form>
+  </div>
+</div>

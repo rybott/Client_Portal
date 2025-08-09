@@ -1,0 +1,28 @@
+<form method="post"
+      hx-post="{% url 'lawyer_create_form' %}?side={{ side }}"
+      hx-target="this"
+      hx-swap="outerHTML">
+  {% csrf_token %}
+  <div class="p-4 border rounded bg-gray-50 space-y-2">
+    <h3 class="font-semibold">Add New Lawyer</h3>
+
+    {{ form.non_field_errors }}
+
+    <div>
+      {{ form.name.label_tag }} {{ form.name }}
+      {{ form.name.errors }}
+    </div>
+
+    <div>
+      {{ form.title.label_tag }} {{ form.title }}
+      {{ form.title.errors }}
+    </div>
+
+    <div>
+      {{ form.law_firm_name.label_tag }} {{ form.law_firm_name }}
+      {{ form.law_firm_name.errors }}
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save</button>
+  </div>
+</form>
